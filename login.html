@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Cuenta | Denise Venica</title>
+  <meta name="description" content="Iniciá sesión o registrate para acceder a tus cursos y materiales exclusivos de Denise Venica.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: var(--white); display: flex; align-items: center;
+      justify-content: center; min-height: 100vh; margin: 0;
+    }
+    .auth-container { width: 100%; max-width: 460px; padding: 24px; }
+    .auth-card {
+      background: #fff; padding: 48px; border-radius: var(--radius);
+      box-shadow: 0 20px 60px var(--shadow); border: 1px solid var(--linen);
+      text-align: center;
+    }
+    .auth-brand { margin-bottom: 28px; display: block; }
+    .auth-brand h4 { font-size: 1.5rem; color: var(--earth); margin: 0; }
+    .auth-brand span {
+      font-weight: 400; font-size: 0.9rem; display: block;
+      font-family: 'DM Sans', sans-serif; opacity: 0.8; color: var(--clay);
+    }
+
+    .auth-card h2 { color: var(--sage); margin-bottom: 8px; font-size: 2rem; }
+    .auth-card > p { color: var(--clay); font-size: 0.95rem; margin-bottom: 28px; }
+
+    /* Tab toggle */
+    .auth-tabs {
+      display: flex; border-radius: var(--radius-sm); overflow: hidden;
+      border: 1px solid var(--linen); margin-bottom: 28px;
+    }
+    .auth-tab {
+      flex: 1; padding: 12px; font-size: 0.9rem; font-weight: 600;
+      background: var(--white); color: var(--clay); border: none;
+      cursor: pointer; transition: var(--transition);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .auth-tab.active {
+      background: var(--plum); color: var(--cream);
+    }
+    .auth-tab:not(.active):hover { background: var(--linen); }
+
+    /* Forms */
+    .auth-form { text-align: left; display: none; }
+    .auth-form.active { display: block; }
+    .auth-form .form-group { margin-bottom: 18px; }
+    .auth-form label {
+      display: block; font-size: 0.85rem; font-weight: 600;
+      color: var(--earth); margin-bottom: 6px;
+    }
+    .auth-form input {
+      width: 100%; padding: 14px 18px; border-radius: var(--radius-sm);
+      border: 1px solid var(--linen); background: var(--white);
+      color: var(--earth); font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; transition: var(--transition);
+    }
+    .auth-form input:focus {
+      border-color: var(--plum); outline: none;
+      box-shadow: 0 0 0 3px rgba(110,93,145,0.1);
+    }
+    .auth-form .btn { width: 100%; justify-content: center; margin-top: 8px; }
+
+    /* Messages */
+    .auth-message {
+      padding: 12px 16px; border-radius: var(--radius-sm);
+      font-size: 0.85rem; margin-bottom: 16px; display: none;
+      text-align: left;
+    }
+    .auth-message.error {
+      display: block; background: rgba(200,50,50,0.08);
+      color: #b33; border: 1px solid rgba(200,50,50,0.15);
+    }
+    .auth-message.success {
+      display: block; background: rgba(83,88,62,0.1);
+      color: var(--sage); border: 1px solid rgba(83,88,62,0.2);
+    }
+
+    .auth-links { margin-top: 20px; font-size: 0.9rem; color: var(--clay); }
+    .auth-links a { color: var(--plum); font-weight: 600; cursor: pointer; }
+    .auth-links a:hover { text-decoration: underline; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px; color: var(--sand);
+      font-size: 0.9rem; font-weight: 600; margin-top: 28px; transition: var(--transition);
+    }
+    .back-link:hover { color: var(--earth); }
+
+    /* Loading state */
+    .btn.loading { opacity: 0.7; pointer-events: none; }
+    .btn.loading::after {
+      content: ''; display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.6s linear infinite; margin-left: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-container fade-up visible">
+    <div class="auth-card">
+      <a href="index.html" class="auth-brand">
+        <h4>Denise Venica<span>Psicología y Crianza</span></h4>
+      </a>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" onclick="showTab('login')">Iniciar sesión</button>
+        <button class="auth-tab" id="tabRegister" onclick="showTab('register')">Crear cuenta</button>
+      </div>
+
+      <!-- Message area -->
+      <div class="auth-message" id="authMessage"></div>
+
+      <!-- LOGIN FORM -->
+      <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="tu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Contraseña</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn">Iniciar sesión</button>
+        <div class="auth-links">
+          <p><a onclick="showTab('register')">¿No tenés cuenta? Registrate acá</a></p>
+        </div>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="regName">Nombre completo *</label>
+          <input type="text" id="regName" placeholder="Tu nombre y apellido" required>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email *</label>
+          <input type="email" id="regEmail" placeholder="tu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="regPhone">Teléfono / WhatsApp *</label>
+          <input type="tel" id="regPhone" placeholder="+54 9 11 1234-5678" required>
+        </div>
+        <div class="form-group">
+          <label for="regCity">Ciudad / Localidad</label>
+          <input type="text" id="regCity" placeholder="Ej: Rosario, Santa Fe">
+        </div>
+        <div class="form-group">
+          <label for="regChildrenAges">Edad de tus hijos/as</label>
+          <input type="text" id="regChildrenAges" placeholder="Ej: 3 y 5 años">
+        </div>
+        <div class="form-group">
+          <label for="regHowFound">¿Cómo nos conociste?</label>
+          <select id="regHowFound" style="width:100%;padding:14px 18px;border-radius:var(--radius-sm);border:1px solid var(--linen);background:var(--white);color:var(--earth);font-family:'DM Sans',sans-serif;font-size:0.95rem;">
+            <option value="" disabled selected>Seleccioná una opción</option>
+            <option value="instagram">Instagram</option>
+            <option value="whatsapp">WhatsApp / Recomendación</option>
+            <option value="google">Búsqueda en Google</option>
+            <option value="amiga">Me lo recomendó una amiga</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Contraseña *</label>
+          <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="regPasswordConfirm">Confirmar contraseña *</label>
+          <input type="password" id="regPasswordConfirm" placeholder="Repetí la contraseña" required minlength="6">
+        </div>
+        <p style="font-size:0.75rem;color:var(--sand);text-align:left;margin-bottom:12px;">Al crear tu cuenta aceptás recibir comunicaciones por email y WhatsApp. Podés darte de baja en cualquier momento.</p>
+        <button type="submit" class="btn btn-primary" id="registerBtn">Crear mi cuenta</button>
+        <div class="auth-links">
+          <p><a onclick="showTab('login')">¿Ya tenés cuenta? Iniciá sesión</a></p>
+        </div>
+      </form>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="index.html" class="back-link">← Volver al inicio</a>
+    </div>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    // ─── TAB SWITCHING ───
+    function showTab(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const tabLogin = document.getElementById('tabLogin');
+      const tabRegister = document.getElementById('tabRegister');
+      const msg = document.getElementById('authMessage');
+
+      msg.className = 'auth-message'; // hide message
+      msg.textContent = '';
+
+      if (tab === 'login') {
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+      } else {
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+      }
+    }
+
+    // ─── SHOW MESSAGE ───
+    function showMessage(text, type) {
+      const msg = document.getElementById('authMessage');
+      msg.textContent = text;
+      msg.className = 'auth-message ' + type;
+    }
+
+    // ─── LOGIN HANDLER ───
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      if (!email.includes('@')) {
+        showMessage('Por favor, ingresá un email válido.', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showMessage('La contraseña debe tener al menos 6 caracteres.', 'error');
+        return;
+      }
+
+      btn.classList.add('loading');
+      btn.textContent = 'Ingresando...';
+
+      const { data, error } = await authSignIn(email, password);
+
+      if (error) {
+        showMessage(translateError(error.message), 'error');
+        btn.classList.remove('loading');
+        btn.textContent = 'Iniciar sesión';
+        return;
+      }
+
+      showMessage('¡Bienvenido/a! Redirigiendo...', 'success');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+    }
+
+    // ─── REGISTER HANDLER ───
+    async function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('registerBtn');
+      const nombre = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const telefono = document.getElementById('regPhone').value.trim();
+      const ciudad = document.getElementById('regCity').value.trim();
+      const edadHijos = document.getElementById('regChildrenAges').value.trim();
+      const comoNosConocio = document.getElementById('regHowFound').value;
+      const password = document.getElementById('regPassword').value.trim();
+      const passwordConfirm = document.getElementById('regPasswordConfirm').value.trim();
+
+      if (!email.includes('@')) {
+        showMessage('El formato del email no es válido.', 'error');
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        showMessage('Las contraseñas no coinciden.', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showMessage('La contraseña debe tener al menos 6 caracteres.', 'error');
+        return;
+      }
+
+      btn.classList.add('loading');
+      btn.textContent = 'Creando cuenta...';
+
+      const profileData = { nombre, telefono, ciudad, edad_hijos: edadHijos, como_nos_conocio: comoNosConocio };
+      const { data, error } = await authSignUp(email, password, profileData);
+
+      if (error) {
+        showMessage(translateError(error.message), 'error');
+        btn.classList.remove('loading');
+        btn.textContent = 'Crear mi cuenta';
+        return;
+      }
+
+      if (isSupabaseConfigured()) {
+        showMessage('¡Cuenta creada! Revisá tu email para confirmar tu registro.', 'success');
+      } else {
+        showMessage('¡Modo Demo: Cuenta creada con éxito! Redirigiendo...', 'success');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+      }
+      btn.classList.remove('loading');
+      btn.textContent = 'Crear mi cuenta';
+    }
+
+    // ─── TRANSLATE COMMON ERRORS ───
+    function translateError(msg) {
+      const translations = {
+        'Invalid login credentials': 'Email o contraseña incorrectos.',
+        'User already registered': 'Este email ya tiene una cuenta registrada.',
+        'Password should be at least 6 characters': 'La contraseña debe tener al menos 6 caracteres.',
+        'Unable to validate email address: invalid format': 'El formato del email no es válido.',
+        'Email rate limit exceeded': 'Demasiados intentos. Esperá unos minutos.',
+      };
+      return translations[msg] || msg;
+    }
+
+    // ─── AUTO-REDIRECT IF ALREADY LOGGED IN ───
+    authRedirectIfLoggedIn();
+  </script>
+
+</body>
+</html>

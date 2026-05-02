@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin | Denise Venica</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #f5f3f0; margin: 0; padding-top: 60px; font-family: 'DM Sans', sans-serif; }
+
+    /* ─── NAV ─── */
+    .admin-nav {
+      background: var(--plum); color: var(--cream); padding: 0 24px;
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between; height: 60px;
+    }
+    .admin-nav .brand { display: flex; align-items: center; gap: 10px; }
+    .admin-nav .brand h4 { font-size: 1.1rem; color: var(--cream); margin: 0; }
+    .admin-nav .brand span { font-size: 0.75rem; opacity: 0.6; background: var(--plum); padding: 2px 8px; border-radius: 4px; }
+    .admin-nav .nav-actions { display: flex; align-items: center; gap: 16px; }
+    .admin-nav .nav-actions a, .admin-nav .nav-actions button {
+      color: var(--cream); font-size: 0.85rem; font-weight: 500; background: none; border: none;
+      cursor: pointer; font-family: 'DM Sans', sans-serif; opacity: 0.8;
+    }
+    .admin-nav .nav-actions a:hover, .admin-nav .nav-actions button:hover { opacity: 1; }
+
+    /* ─── TABS ─── */
+    .admin-tabs {
+      display: flex; background: #fff; border-bottom: 1px solid var(--linen);
+      padding: 0 24px; overflow-x: auto;
+    }
+    .admin-tab {
+      padding: 16px 20px; font-size: 0.9rem; font-weight: 600;
+      color: var(--clay); cursor: pointer; border: none; background: none;
+      border-bottom: 3px solid transparent; transition: var(--transition);
+      font-family: 'DM Sans', sans-serif; white-space: nowrap;
+    }
+    .admin-tab:hover { color: var(--earth); }
+    .admin-tab.active { color: var(--plum); border-bottom-color: var(--plum); }
+
+    /* ─── MAIN CONTAINER ─── */
+    .admin-main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+    /* ─── TAB SECTIONS ─── */
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
+
+    /* ─── STAT CARDS ─── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card {
+      background: #fff; padding: 24px; border-radius: 12px;
+      border: 1px solid var(--linen); text-align: center;
+    }
+    .stat-card .stat-number { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--plum); font-weight: 700; }
+    .stat-card .stat-label { font-size: 0.85rem; color: var(--clay); margin-top: 4px; }
+
+    /* ─── TABLES ─── */
+    .admin-table-wrap { overflow-x: auto; background: #fff; border-radius: 12px; border: 1px solid var(--linen); }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .admin-table th {
+      text-align: left; padding: 14px 16px; background: var(--linen);
+      color: var(--earth); font-weight: 700; font-size: 0.8rem;
+      text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap;
+    }
+    .admin-table td { padding: 12px 16px; border-bottom: 1px solid #f0ede9; color: var(--earth); }
+    .admin-table tr:hover td { background: #faf8f5; }
+    .admin-table tr:last-child td { border-bottom: none; }
+
+    /* ─── TOOLBAR ─── */
+    .toolbar {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 20px; padding: 16px; background: #fff;
+      border-radius: 12px; border: 1px solid var(--linen);
+    }
+    .toolbar input, .toolbar select {
+      padding: 10px 14px; border: 1px solid var(--linen); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--earth);
+      background: var(--white);
+    }
+    .toolbar input:focus, .toolbar select:focus { outline: none; border-color: var(--plum); }
+    .toolbar input { min-width: 220px; }
+    .toolbar .spacer { flex: 1; }
+
+    /* ─── BUTTONS ─── */
+    .btn-admin {
+      padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 600;
+      transition: var(--transition);
+    }
+    .btn-plum { background: var(--plum); color: var(--cream); }
+    .btn-plum:hover { background: var(--plum-light); }
+    .btn-sage { background: var(--sage); color: var(--cream); }
+    .btn-sage:hover { background: var(--sage-light); }
+    .btn-outline {
+      background: transparent; color: var(--plum); border: 1px solid var(--plum);
+    }
+    .btn-outline:hover { background: var(--plum); color: var(--cream); }
+    .btn-danger { background: #c33; color: #fff; }
+    .btn-danger:hover { background: #a22; }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+
+    /* ─── SECTION HEADER ─── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .section-header h2 { font-size: 1.4rem; color: var(--earth); margin: 0; }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 200; display: none; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff; border-radius: 16px; max-width: 560px; width: 100%;
+      max-height: 85vh; overflow-y: auto; padding: 32px;
+    }
+    .modal h3 { font-size: 1.3rem; color: var(--earth); margin-bottom: 20px; }
+    .modal .form-group { margin-bottom: 16px; }
+    .modal label {
+      display: block; font-size: 0.85rem; font-weight: 600;
+      color: var(--earth); margin-bottom: 6px;
+    }
+    .modal input, .modal textarea, .modal select {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--linen);
+      border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      color: var(--earth); background: var(--white);
+    }
+    .modal textarea { min-height: 80px; resize: vertical; }
+    .modal input:focus, .modal textarea:focus, .modal select:focus {
+      outline: none; border-color: var(--plum);
+    }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+
+    /* ─── BADGES ─── */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 700;
+    }
+    .badge-green { background: rgba(83,88,62,0.15); color: var(--sage); }
+    .badge-yellow { background: rgba(200,170,50,0.15); color: #a08520; }
+    .badge-red { background: rgba(200,50,50,0.1); color: #b33; }
+
+    /* ─── NOTES ─── */
+    .notes-list { margin-top: 16px; }
+    .note-item {
+      background: var(--white); padding: 14px 16px; border-radius: 8px;
+      border: 1px solid var(--linen); margin-bottom: 10px;
+    }
+    .note-item .note-date { font-size: 0.75rem; color: var(--sand); margin-top: 6px; }
+
+    /* ─── EMAIL CONFIG ─── */
+    .email-config-card {
+      background: #fff; padding: 24px; border-radius: 12px;
+      border: 1px solid var(--linen); margin-bottom: 20px;
+    }
+    .email-config-card h3 { font-size: 1.1rem; margin-bottom: 12px; color: var(--earth); }
+
+    /* ─── DROPDOWN MENU (3 DOTS) ─── */
+    .dropdown { position: relative; display: inline-block; }
+    .dropdown-content {
+      display: none; position: absolute; right: 0; background-color: #fff;
+      min-width: 150px; box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      z-index: 10; border-radius: 8px; overflow: hidden; border: 1px solid var(--linen);
+    }
+    .dropdown-content button {
+      width: 100%; text-align: left; padding: 10px 16px; border: none;
+      background: none; font-size: 0.85rem; color: var(--earth); cursor: pointer;
+    }
+    .dropdown-content button:hover { background-color: var(--linen); }
+    .dropdown:hover .dropdown-content { display: block; }
+    .dots-btn {
+      background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--clay);
+      padding: 0 8px; border-radius: 4px;
+    }
+    .dots-btn:hover { background: var(--linen); color: var(--earth); }
+
+    /* ─── PAGINATION ─── */
+    .pagination {
+      display: flex; justify-content: center; align-items: center;
+      gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--linen);
+    }
+    .page-btn {
+      padding: 6px 12px; border: 1px solid var(--sand); border-radius: 6px;
+      background: #fff; color: var(--earth); cursor: pointer; font-size: 0.85rem;
+    }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-btn:not(:disabled):hover { background: var(--linen); }
+    .page-info { font-size: 0.85rem; color: var(--clay); font-weight: 600; }
+
+    /* ─── TOAST NOTIFICATIONS ─── */
+    #toast-container {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .toast {
+      background: #fff; border-left: 4px solid var(--plum);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 16px 20px;
+      border-radius: 8px; font-size: 0.9rem; color: var(--earth);
+      display: flex; align-items: center; justify-content: space-between;
+      min-width: 280px; max-width: 400px;
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    .toast.success { border-left-color: var(--sage); }
+    .toast.error { border-left-color: #c33; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .admin-main { padding: 16px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar input { min-width: 100%; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      #toast-container { left: 24px; right: 24px; bottom: 24px; }
+      .toast { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="admin-nav">
+    <div class="brand" style="display:flex;align-items:center;gap:16px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <h4>Denise Venica</h4>
+        <span>ADMIN</span>
+      </div>
+      <a href="index.html" style="font-size:0.8rem; color:var(--cream); text-decoration:none; padding:4px 10px; border:1px solid rgba(255,248,238,0.3); border-radius:20px; opacity:0.8; transition:0.3s;" onmouseover="this.style.opacity='1'; this.style.background='rgba(255,248,238,0.1)'" onmouseout="this.style.opacity='0.8'; this.style.background='transparent'">🌍 Visitar página web</a>
+    </div>
+    <div class="nav-actions">
+      <button onclick="handleLogout()">Cerrar sesión</button>
+    </div>
+  </nav>
+
+  <!-- TABS -->
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="resumen">📊 Resumen</button>
+    <button class="admin-tab" data-tab="usuarios">👥 Usuarios</button>
+    <button class="admin-tab" data-tab="cursos">📚 Cursos</button>
+    <button class="admin-tab" data-tab="ventas">💰 Ventas</button>
+    <button class="admin-tab" data-tab="emails">✉️ Emails</button>
+    <button class="admin-tab" data-tab="consultas">📩 Consultas</button>
+    <button class="admin-tab" data-tab="sugerencias">💬 Sugerencias</button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="admin-main">
+
+    <!-- ═══════ TAB: RESUMEN ═══════ -->
+    <section class="tab-section active" id="secResumen">
+      <div class="section-header" style="margin-bottom:12px;"><h2>Resumen General</h2></div>
+      
+      <div class="toolbar" style="margin-bottom:24px; padding:12px 16px;">
+        <label for="statsDateFilter" style="font-size:0.85rem; font-weight:600; color:var(--earth);">📅 Período:</label>
+        <select id="statsDateFilter" onchange="toggleCustomDateFilter(); loadStats();">
+          <option value="all">Desde siempre</option>
+          <option value="today">Hoy</option>
+          <option value="yesterday">Ayer</option>
+          <option value="week">Última semana</option>
+          <option value="month">Último mes</option>
+          <option value="custom">Personalizado...</option>
+        </select>
+        
+        <div id="customDateContainer" style="display:none; align-items:center; gap:8px;">
+          <input type="date" id="customStartDate" onchange="loadStats()" style="width:130px;">
+          <span style="color:var(--sand); font-size:0.85rem;">hasta</span>
+          <input type="date" id="customEndDate" onchange="loadStats()" style="width:130px;">
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="statUsuarios">—</div>
+          <div class="stat-label">Usuarios registrados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statCompras">—</div>
+          <div class="stat-label">Compras realizadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statRecaudado">—</div>
+          <div class="stat-label">Total recaudado</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statSemana">—</div>
+          <div class="stat-label">Registros esta semana</div>
+        </div>
+      </div>
+
+      <div class="email-config-card" style="margin-bottom:32px;">
+        <h3>📈 Evolución de Ventas</h3>
+        <div style="height: 300px; position: relative;">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+
+      <div class="section-header"><h2>Estadísticas de Cursos</h2></div>
+      <div id="courseStatsContainer">
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Curso</th>
+                <th>Ventas</th>
+                <th>Recaudado</th>
+                <th>Tasa de conversión</th>
+              </tr>
+            </thead>
+            <tbody id="courseStatsBody">
+              <tr><td colspan="4" style="text-align:center;color:var(--sand);padding:24px;">Cargando estadísticas...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ TAB: USUARIOS ═══════ -->
+    <section class="tab-section" id="secUsuarios">
+      <div class="section-header">
+        <h2>Usuarios</h2>
+        <div style="display:flex;gap:12px;">
+          <button class="btn-admin btn-plum admin-only" onclick="openCreateUserModal()">+ Nuevo usuario</button>
+          <button class="btn-admin btn-sage admin-only" onclick="exportUsersCSV()">📥 Exportar CSV</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="userSearch" placeholder="🔍 Buscar por nombre o email..." oninput="filterUsers()">
+        <select id="userFilterSource" onchange="filterUsers()">
+          <option value="">Todas las fuentes</option>
+          <option value="instagram">Instagram</option>
+          <option value="whatsapp">WhatsApp / Recomendación</option>
+          <option value="google">Google</option>
+          <option value="amiga">Recomendación</option>
+          <option value="otro">Otro</option>
+        </select>
+        <select id="userFilterCity" onchange="filterUsers()">
+          <option value="">Todas las ciudades</option>
+        </select>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Ciudad</th>
+              <th>Hijos</th>
+              <th>Fuente</th>
+              <th>Registro</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="8" style="text-align:center;color:var(--sand);padding:24px;">Cargando usuarios...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="usersPagination" class="pagination"></div>
+    </section>
+
+    <!-- ═══════ TAB: CURSOS ═══════ -->
+    <section class="tab-section" id="secCursos">
+      <div class="section-header">
+        <h2>Cursos y Módulos</h2>
+        <button class="btn-admin btn-plum not-visor" onclick="openCourseModal()">+ Nuevo curso</button>
+      </div>
+
+      <div id="coursesListContainer">
+        <p style="text-align:center;color:var(--sand);padding:24px;">Cargando cursos...</p>
+      </div>
+    </section>
+
+    <!-- ═══════ TAB: VENTAS ═══════ -->
+    <section class="tab-section" id="secVentas">
+      <div class="section-header">
+        <h2>Historial de Ventas</h2>
+        <button class="btn-admin btn-plum not-visor" onclick="openGrantAccessModal()">🎁 Otorgar acceso manual</button>
+      </div>
+
+      <div class="toolbar">
+        <select id="salesFilterCourse" onchange="filterSales()">
+          <option value="">Todos los cursos</option>
+        </select>
+        <select id="salesFilterStatus" onchange="filterSales()">
+          <option value="">Todos los estados</option>
+          <option value="approved">Aprobado</option>
+          <option value="pending">Pendiente</option>
+          <option value="rejected">Rechazado</option>
+        </select>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Curso</th>
+              <th>Estado</th>
+              <th>ID Pago MP</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="salesTableBody">
+            <tr><td colspan="5" style="text-align:center;color:var(--sand);padding:24px;">Cargando ventas...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════ TAB: EMAILS ═══════ -->
+    <section class="tab-section" id="secEmails">
+      <div class="section-header"><h2>Emails Masivos</h2></div>
+
+      <div class="email-config-card">
+        <h3>⚙️ Configuración de dominio</h3>
+        <p style="color:var(--clay);font-size:0.9rem;margin-bottom:16px;">Para enviar emails desde tu dominio personalizado, necesitás configurar los registros DNS. Completá los datos de tu proveedor de email.</p>
+        <div class="form-group">
+          <label for="emailDomain">Dominio de envío</label>
+          <input type="text" id="emailDomain" placeholder="Ej: info@denisevenica.com">
+        </div>
+        <div class="form-group">
+          <label for="emailSenderName">Nombre del remitente</label>
+          <input type="text" id="emailSenderName" placeholder="Ej: Denise Venica" value="Denise Venica">
+        </div>
+        <button class="btn-admin btn-outline btn-sm" onclick="saveEmailConfig()">Guardar configuración</button>
+      </div>
+
+      <div class="email-config-card">
+        <h3>📧 Redactar email masivo</h3>
+        <div class="form-group">
+          <label for="emailTo">Destinatarios</label>
+          <select id="emailTo" style="width:100%;">
+            <option value="all">Todos los usuarios</option>
+            <option value="buyers">Solo compradores</option>
+            <option value="non-buyers">Solo usuarios sin compras</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="emailSubject">Asunto</label>
+          <input type="text" id="emailSubject" placeholder="Asunto del email...">
+        </div>
+        <div class="form-group">
+          <label for="emailBody">Mensaje</label>
+          <textarea id="emailBody" rows="8" placeholder="Escribí el contenido del email acá...&#10;&#10;Podés usar {nombre} para personalizar con el nombre del usuario."></textarea>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <button class="btn-admin btn-plum" onclick="sendMassEmail()">📤 Enviar email masivo</button>
+          <button class="btn-admin btn-outline" onclick="previewEmail()">👁 Vista previa</button>
+          <span id="emailRecipientCount" style="font-size:0.85rem;color:var(--sand);"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ TAB: CONSULTAS ═══════ -->
+    <section class="tab-section" id="secConsultas">
+      <div class="section-header"><h2>Consultas del Formulario</h2></div>
+      <div id="inquiriesContainer">
+        <p style="text-align:center;color:var(--sand);padding:24px;">Cargando consultas...</p>
+      </div>
+    </section>
+
+    <!-- ═══════ TAB: SUGERENCIAS ═══════ -->
+    <section class="tab-section" id="secSugerencias">
+      <div class="section-header"><h2>Sugerencias de Alumnos</h2></div>
+      <div id="suggestionsContainer">
+        <p style="text-align:center;color:var(--sand);padding:24px;">Cargando sugerencias...</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════ MODAL: DETALLE DE USUARIO ═══════ -->
+  <div class="modal-overlay" id="modalUserDetail">
+    <div class="modal">
+      <h3 id="modalUserName">Detalle del usuario</h3>
+      <div id="modalUserInfo"></div>
+
+      <div id="roleSelectorGroup" class="admin-only" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--linen); display:none;">
+        <label for="modalUserRole" style="display:block; font-size:0.85rem; font-weight:600; color:var(--earth); margin-bottom:6px;">Rol de sistema</label>
+        <div style="display:flex; gap:8px;">
+          <select id="modalUserRole" style="flex:1; padding:8px 12px; border:1px solid var(--linen); border-radius:6px; font-family:'DM Sans',sans-serif; font-size:0.85rem;">
+            <option value="user">Usuario (Normal)</option>
+            <option value="visor">Visor (Solo lectura)</option>
+            <option value="editor">Editor (Cursos, módulos)</option>
+            <option value="admin">Administrador (Acceso total)</option>
+          </select>
+          <button class="btn-admin btn-sage btn-sm" onclick="changeUserRole()">Guardar Rol</button>
+        </div>
+      </div>
+
+      <h4 style="margin-top:24px;margin-bottom:12px;color:var(--earth);">📚 Cursos y Progreso</h4>
+      <div id="modalUserCourses" style="margin-bottom:24px;"></div>
+
+      <h4 style="margin-top:24px;margin-bottom:12px;color:var(--earth);">📝 Notas internas</h4>
+      <div id="modalUserNotes" class="notes-list"></div>
+      <div class="not-visor" style="display:flex;gap:8px;margin-top:12px;">
+        <input type="text" id="newNoteInput" placeholder="Agregar una nota..." style="flex:1;padding:10px 14px;border:1px solid var(--linen);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;">
+        <button class="btn-admin btn-plum btn-sm" onclick="addNote()">Agregar</button>
+      </div>
+
+      <div class="modal-actions" style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+        <button class="btn-admin btn-danger btn-sm admin-only" onclick="deleteUser()" style="margin-right:auto;">🗑 Eliminar Usuario</button>
+        <button class="btn-admin btn-outline" onclick="closeModal('modalUserDetail')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ MODAL: CREAR/EDITAR CURSO ═══════ -->
+  <div class="modal-overlay" id="modalCourse">
+    <div class="modal">
+      <h3 id="modalCourseTitle">Nuevo curso</h3>
+      <input type="hidden" id="courseEditId">
+      <div class="form-group">
+        <label for="courseTitulo">Título</label>
+        <input type="text" id="courseTitulo" placeholder="Nombre del curso">
+      </div>
+      <div class="form-group">
+        <label for="courseDescripcion">Descripción</label>
+        <textarea id="courseDescripcion" placeholder="Descripción del curso..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="coursePrecio">Precio (ARS)</label>
+        <input type="number" id="coursePrecio" placeholder="35000">
+      </div>
+      <div class="form-group">
+        <label for="courseActivo">Estado</label>
+        <select id="courseActivo">
+          <option value="true">Activo</option>
+          <option value="false">Inactivo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="courseImagenUrl">Imagen URL</label>
+        <input type="text" id="courseImagenUrl" placeholder="Ej: assets/brujula_crianza.png">
+      </div>
+
+      <h4 style="margin-top:20px;margin-bottom:12px;color:var(--earth);">Módulos</h4>
+      <div id="courseModulesList"></div>
+      <button class="btn-admin btn-outline btn-sm" onclick="addModuleRow()" style="margin-top:8px;">+ Agregar módulo</button>
+
+      <div class="modal-actions">
+        <button class="btn-admin btn-outline" onclick="closeModal('modalCourse')">Cancelar</button>
+        <button class="btn-admin btn-plum" onclick="saveCourse()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ MODAL: OTORGAR ACCESO MANUAL ═══════ -->
+  <div class="modal-overlay" id="modalGrantAccess">
+    <div class="modal">
+      <h3>🎁 Otorgar acceso manual</h3>
+      <p style="font-size:0.9rem;color:var(--clay);margin-bottom:20px;">Dar acceso a un curso sin pasar por MercadoPago (regalos, canjes, resolución de problemas).</p>
+      <div class="form-group">
+        <label for="grantUserSelect">Usuario</label>
+        <select id="grantUserSelect"><option value="">Seleccionar usuario...</option></select>
+      </div>
+      <div class="form-group">
+        <label for="grantCourseSelect">Curso</label>
+        <select id="grantCourseSelect"><option value="">Seleccionar curso...</option></select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-admin btn-outline" onclick="closeModal('modalGrantAccess')">Cancelar</button>
+        <button class="btn-admin btn-sage" onclick="grantAccess()">Otorgar acceso</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ MODAL: CREAR NUEVO USUARIO ═══════ -->
+  <div class="modal-overlay" id="modalCreateUser">
+    <div class="modal">
+      <h3>👤 Crear Nuevo Usuario</h3>
+      <p style="font-size:0.9rem;color:var(--clay);margin-bottom:20px;">Crea una cuenta para alguien de tu equipo o un cliente sin que tengan que registrarse. Pasales la contraseña temporal para que puedan entrar.</p>
+      
+      <div class="form-group">
+        <label for="newUserNombre">Nombre completo</label>
+        <input type="text" id="newUserNombre" placeholder="Ej: Analía Gómez">
+      </div>
+      <div class="form-group">
+        <label for="newUserEmail">Email</label>
+        <input type="email" id="newUserEmail" placeholder="ejemplo@correo.com">
+      </div>
+      <div class="form-group">
+        <label for="newUserPassword">Contraseña temporal</label>
+        <input type="text" id="newUserPassword" placeholder="Ej: Denise2024 (Mínimo 6 caracteres)">
+      </div>
+      <div class="form-group">
+        <label for="newUserRole">Rol de sistema</label>
+        <select id="newUserRole">
+          <option value="user">Usuario normal (Cliente)</option>
+          <option value="visor">Visor (Solo lectura)</option>
+          <option value="editor">Editor (Cursos y ventas)</option>
+          <option value="admin">Administrador (Acceso total)</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-admin btn-outline" onclick="closeModal('modalCreateUser')">Cancelar</button>
+        <button class="btn-admin btn-plum" onclick="submitCreateUser()" id="btnSubmitCreateUser">Crear Usuario</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
