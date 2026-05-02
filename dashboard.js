@@ -23,8 +23,8 @@ async function initDashboard() {
     if (navRight) {
       const adminBtn = document.createElement('a');
       adminBtn.href = 'admin.html';
-      adminBtn.innerHTML = '⚙️ Admin';
-      adminBtn.style.cssText = 'color:var(--plum); font-weight:600; text-decoration:none; font-size:0.85rem; border:1px solid var(--linen); padding:4px 10px; border-radius:4px;';
+      adminBtn.className = 'nav-btn';
+      adminBtn.innerHTML = '⚙️ <span>Admin</span>';
       navRight.insertBefore(adminBtn, navRight.firstChild);
     }
   }

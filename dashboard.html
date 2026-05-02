@@ -15,27 +15,33 @@
 
     /* Dashboard Nav */
     .dash-nav {
-      background: #fff; padding: 14px 24px; border-bottom: 1px solid var(--linen);
+      background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--linen);
       position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      box-sizing: border-box;
+      box-sizing: border-box; flex-wrap: wrap; gap: 10px;
     }
-    .dash-nav .brand { display: flex; align-items: center; gap: 10px; }
-    .dash-nav .brand h4 { font-size: 1.15rem; color: var(--earth); margin: 0; }
-    .dash-nav .brand span {
-      font-family: 'DM Sans', sans-serif; font-size: 0.75rem;
-      color: var(--clay); opacity: 0.7;
-    }
+    .dash-nav .brand { display: flex; align-items: center; gap: 8px; }
+    .dash-nav .brand h4 { font-size: 1.1rem; color: var(--earth); margin: 0; }
+    .dash-nav .brand span { display: none; } /* Hide tagline on dashboard nav */
+    
     .dash-nav .user-menu {
-      display: flex; align-items: center; gap: 16px;
-      font-size: 0.9rem; font-weight: 600; color: var(--earth);
+      display: flex; align-items: center; gap: 12px;
+      font-size: 0.85rem; font-weight: 600; color: var(--earth);
     }
     .dash-nav .logout {
-      color: var(--plum); font-weight: 500; font-size: 0.85rem;
+      color: var(--plum); font-weight: 500; font-size: 0.8rem;
       cursor: pointer; background: none; border: none;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'DM Sans', sans-serif; padding: 0;
     }
     .dash-nav .logout:hover { text-decoration: underline; }
+
+    .nav-btn {
+      font-size: 0.75rem; color: var(--earth); text-decoration: none; 
+      padding: 6px 12px; border: 1px solid rgba(83,88,62,0.3); 
+      border-radius: 20px; transition: 0.3s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .nav-btn:hover { background: rgba(83,88,62,0.05); }
 
     /* Header */
     .dash-header {
@@ -110,9 +116,19 @@
 
     /* Responsive */
     @media (max-width: 768px) {
+      body { padding-top: 100px; }
+      .dash-nav { padding: 8px 16px; justify-content: center; }
+      .dash-nav .brand { display: none; } /* Hide brand name to save space */
       .dash-header h1 { font-size: 1.8rem; }
       .dash-header { padding: 40px 20px; }
       .course-grid { grid-template-columns: 1fr; }
+      .nav-btn span { display: none; } /* Hide text on mobile icons if needed */
+    }
+    
+    @media (max-width: 480px) {
+      .dash-nav { gap: 8px; }
+      .user-menu { gap: 8px; font-size: 0.8rem; }
+      .nav-btn { padding: 4px 8px; }
     }
   </style>
 </head>
@@ -120,11 +136,13 @@
 
   <!-- NAV -->
   <nav class="dash-nav">
-    <div style="display:flex;align-items:center;gap:16px;">
+    <div style="display:flex;align-items:center;gap:12px;">
       <a href="index.html" class="brand">
         <h4>Denise Venica</h4>
       </a>
-      <a href="index.html" style="font-size:0.8rem; color:var(--earth); text-decoration:none; padding:4px 10px; border:1px solid rgba(83,88,62,0.3); border-radius:20px; transition:0.3s;" onmouseover="this.style.background='rgba(83,88,62,0.05)'" onmouseout="this.style.background='transparent'">🌍 Visitar página web</a>
+      <a href="index.html" class="nav-btn">
+        🌍 <span>Visitar página web</span>
+      </a>
     </div>
     <div class="user-menu">
       <span id="userName">Cargando...</span>
